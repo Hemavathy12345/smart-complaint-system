@@ -17,7 +17,7 @@ npm install
 cp .env.example .env      # Windows: copy .env.example .env
 ```
 Open `.env` and set `JWT_SECRET` (any long random string) and `ADMIN_PASSWORD`.
-
+RUN THE FILE
 ## 3. Run
 ```bash
 npm start
