@@ -1,0 +1,1339 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Smart Campus Complaints</title>
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --surface: #fff;
+        --ink: #17243b;
+        --muted: #66748a;
+        --line: #e1e7f0;
+        --brand: #087fbe;
+        --brand-ink: #fff;
+        --pend: #9a5b00;
+        --pend-bg: #fdf0d8;
+        --prog: #1d4f9c;
+        --prog-bg: #e0ebfb;
+        --done: #1e6b3f;
+        --done-bg: #dff3e6;
+        --danger: #b3261e;
+        color-scheme: light;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          16px/1.5 system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+        color: inherit;
+      }
+      :focus-visible {
+        outline: 3px solid var(--brand);
+        outline-offset: 2px;
+      }
+      header {
+        background: #fff;
+        color: #17243b;
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+      }
+      .logo {
+        font-weight: 800;
+        font-size: 1.25rem;
+        letter-spacing: -0.02em;
+        margin-right: auto;
+      }
+      .logo small {
+        display: block;
+        font-weight: 400;
+        font-size: 0.78rem;
+        opacity: 0.75;
+      }
+      nav {
+        display: flex;
+        gap: 6px;
+      }
+      nav button,
+      .ghost {
+        background: transparent;
+        border: 1px solid #d6e0ed;
+        color: #41536b;
+        border-radius: 8px;
+        padding: 7px 14px;
+        cursor: pointer;
+      }
+      nav button[aria-pressed="true"] {
+        background: #eaf6ff;
+        color: #087fbe;
+        border-color: #b8e3fa;
+        font-weight: 600;
+      }
+      main {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 24px 16px 60px;
+      }
+      h1 {
+        font-size: 1.9rem;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        margin: 0 0 6px;
+      }
+      h2 {
+        font-size: 1.2rem;
+        margin: 0 0 12px;
+      }
+      .lead {
+        color: var(--muted);
+        margin: 0 0 22px;
+        max-width: 60ch;
+      }
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      .login {
+        max-width: 430px;
+        margin: 30px auto;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin: 0 0 4px;
+      }
+      .field {
+        margin-bottom: 14px;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px 12px;
+      }
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      @media (max-width: 640px) {
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+      }
+      .btn {
+        background: var(--brand);
+        color: var(--brand-ink);
+        border: 0;
+        border-radius: 8px;
+        padding: 10px 18px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+      .btn.sec {
+        background: transparent;
+        color: var(--ink);
+        border: 1px solid var(--line);
+      }
+      .btn.sm {
+        padding: 6px 12px;
+        font-size: 0.88rem;
+      }
+      .btn.danger {
+        background: transparent;
+        color: var(--danger);
+        border: 1px solid var(--danger);
+      }
+      .hint {
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin: 8px 0 0;
+      }
+      .err {
+        color: var(--danger);
+        font-size: 0.92rem;
+        margin: 10px 0 0;
+        min-height: 1.3em;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      @media (max-width: 640px) {
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .stat {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px 16px;
+      }
+      .stat b {
+        display: block;
+        font-size: 1.9rem;
+        line-height: 1.1;
+      }
+      .stat span {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+      .tools {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      .tools input {
+        flex: 1 1 200px;
+        width: auto;
+      }
+      .tools select {
+        width: auto;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-left: 6px solid var(--line);
+        border-radius: 12px;
+        padding: 16px 18px;
+        margin-bottom: 12px;
+      }
+      .card.s-Pending {
+        border-left-color: var(--pend);
+      }
+      .card.s-InProgress {
+        border-left-color: var(--prog);
+      }
+      .card.s-Completed {
+        border-left-color: var(--done);
+      }
+      .top {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+      .card h3 {
+        margin: 0;
+        font-size: 1.08rem;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin: 4px 0 8px;
+      }
+      .badge {
+        display: inline-block;
+        border-radius: 99px;
+        padding: 3px 11px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .b-Pending {
+        background: var(--pend-bg);
+        color: var(--pend);
+      }
+      .b-InProgress {
+        background: var(--prog-bg);
+        color: var(--prog);
+      }
+      .b-Completed {
+        background: var(--done-bg);
+        color: var(--done);
+      }
+      .pri {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-left: 6px;
+      }
+      .desc {
+        margin: 0 0 10px;
+        white-space: pre-wrap;
+      }
+      .steps {
+        display: flex;
+        margin: 12px 0 4px;
+        font-size: 0.8rem;
+      }
+      .step {
+        flex: 1;
+        text-align: center;
+        color: var(--muted);
+        position: relative;
+        padding-top: 20px;
+      }
+      .step::before {
+        content: "";
+        position: absolute;
+        top: 4px;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--line);
+      }
+      .step::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        margin-left: -6px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--line);
+      }
+      .step.on {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .step.on::before,
+      .step.on::after {
+        background: var(--brand);
+      }
+      .reply {
+        background: var(--bg);
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 0.92rem;
+        margin-top: 8px;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-top: 10px;
+      }
+      .actions input {
+        flex: 1 1 200px;
+        width: auto;
+        padding: 7px 10px;
+      }
+      .empty {
+        text-align: center;
+        color: var(--muted);
+        padding: 34px 10px;
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+      }
+      .tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+      }
+      .tabs button {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 99px;
+        padding: 8px 18px;
+        cursor: pointer;
+      }
+      .tabs button[aria-pressed="true"] {
+        background: var(--brand);
+        color: var(--brand-ink);
+        border-color: var(--brand);
+        font-weight: 600;
+      }
+      #toast {
+        position: fixed;
+        left: 50%;
+        bottom: 20px;
+        transform: translateX(-50%);
+        background: var(--ink);
+        color: var(--bg);
+        padding: 10px 18px;
+        border-radius: 8px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+      #toast.show {
+        opacity: 1;
+      }
+      .who {
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+      /* Refined visual system */
+      :root {
+        --bg: #f5f7fb;
+        --surface: #fff;
+        --ink: #17243b;
+        --muted: #66748a;
+        --line: #e1e7f0;
+        --brand: #087fbe;
+        --brand-ink: #fff;
+        --pend: #a45b08;
+        --pend-bg: #fff2d9;
+        --prog: #315eb3;
+        --prog-bg: #e8efff;
+        --done: #18764b;
+        --done-bg: #e4f6ec;
+        --danger: #b42318;
+        color-scheme: light;
+      }
+      body {
+        min-height: 100vh;
+        background:
+          radial-gradient(ellipse at 10% 0%, rgba(56, 170, 231, 0.1), transparent 34rem),
+          var(--bg);
+        color: var(--ink);
+        font:
+          15px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+          Roboto, sans-serif;
+      }
+      header {
+        min-height: 76px;
+        padding: 12px max(22px, calc((100vw - 1180px) / 2));
+        background: rgba(255, 255, 255, 0.96);
+        color: #17243b;
+        border-bottom: 1px solid #e5edf5;
+        box-shadow: 0 5px 22px rgba(36, 75, 110, 0.07);
+      }
+      .logo {
+        position: relative;
+        padding-left: 46px;
+        font-size: 1.08rem;
+        letter-spacing: -0.035em;
+      }
+      .logo::before {
+        content: "SC";
+        position: absolute;
+        left: 0;
+        top: 2px;
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border: 1px solid #cfeaff;
+        border-radius: 11px;
+        background: #eaf6ff;
+        color: #087fbe;
+        font-size: 0.76rem;
+        letter-spacing: 0.03em;
+      }
+      .logo small {
+        margin-top: 1px;
+        font-size: 0.7rem;
+        letter-spacing: 0.025em;
+      }
+      nav {
+        gap: 7px;
+      }
+      nav button,
+      .ghost {
+        border-color: #d6e0ed;
+        border-radius: 9px;
+        padding: 8px 13px;
+        font-size: 0.86rem;
+        transition: background 160ms ease, border-color 160ms ease;
+      }
+      nav button:hover,
+      .ghost:hover {
+        background: #f0f8ff;
+      }
+      nav button[aria-pressed="true"] {
+        background: #e5f4ff;
+        color: #087fbe;
+        border-color: #b8e3fa;
+        box-shadow: 0 2px 8px rgba(8, 127, 190, 0.1);
+      }
+      main {
+        max-width: 1180px;
+        padding: 42px 24px 72px;
+      }
+      h1 {
+        font-size: clamp(1.7rem, 3vw, 2.2rem);
+        letter-spacing: -0.045em;
+        margin-bottom: 8px;
+      }
+      h2 {
+        font-size: 1.12rem;
+        letter-spacing: -0.02em;
+      }
+      .lead {
+        margin-bottom: 26px;
+        font-size: 1rem;
+      }
+      .panel,
+      .stat,
+      .card {
+        border-color: #e5eaf1;
+        box-shadow: 0 8px 26px rgba(25, 45, 70, 0.055);
+      }
+      .panel {
+        border-radius: 16px;
+        padding: 26px;
+      }
+      .login {
+        margin-top: 42px;
+      }
+      input,
+      select,
+      textarea {
+        background-color: #fbfcff;
+        border-radius: 10px;
+        padding: 11px 13px;
+        transition: border-color 150ms ease, box-shadow 150ms ease;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--brand);
+        box-shadow: 0 0 0 3px rgba(8, 127, 190, 0.14);
+        outline: none;
+      }
+      label {
+        margin-bottom: 6px;
+        color: #35435a;
+        font-size: 0.86rem;
+      }
+      .btn {
+        min-height: 42px;
+        border-radius: 10px;
+        padding: 10px 17px;
+        box-shadow: 0 3px 8px rgba(8, 127, 190, 0.14);
+        transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease;
+      }
+      .btn:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px rgba(8, 127, 190, 0.2);
+        filter: brightness(1.04);
+      }
+      .btn.sec,
+      .btn.danger {
+        box-shadow: none;
+      }
+      .tabs {
+        gap: 9px;
+        margin-bottom: 22px;
+      }
+      .tabs button {
+        padding: 8px 16px;
+        color: #475569;
+        font-weight: 550;
+        transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+      }
+      .tabs button:hover {
+        border-color: #aab8ca;
+      }
+      .stats {
+        gap: 14px;
+        margin: 24px 0;
+      }
+      .stat {
+        position: relative;
+        overflow: hidden;
+        border-radius: 14px;
+        padding: 18px 20px;
+      }
+      .stat::after {
+        content: "";
+        position: absolute;
+        right: -17px;
+        bottom: -27px;
+        width: 82px;
+        height: 82px;
+        border-radius: 50%;
+        background: rgba(56, 170, 231, 0.09);
+      }
+      .stat b {
+        margin-bottom: 5px;
+        font-size: 2rem;
+        letter-spacing: -0.04em;
+      }
+      .stat span {
+        font-size: 0.82rem;
+        font-weight: 550;
+      }
+      .tools {
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .tools select {
+        min-width: 150px;
+      }
+      .card {
+        border-left-width: 4px;
+        border-radius: 14px;
+        padding: 20px 22px;
+        margin-bottom: 14px;
+        transition: box-shadow 160ms ease, transform 160ms ease;
+      }
+      .card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 30px rgba(25, 45, 70, 0.09);
+      }
+      .card h3 {
+        font-size: 1.02rem;
+        letter-spacing: -0.015em;
+      }
+      .meta {
+        font-size: 0.81rem;
+      }
+      .badge {
+        padding: 4px 10px;
+        font-size: 0.76rem;
+        letter-spacing: 0.01em;
+      }
+      .steps {
+        margin-top: 18px;
+      }
+      .reply {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+      .empty {
+        padding: 40px 18px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.58);
+      }
+      #toast {
+        z-index: 10;
+        max-width: min(92vw, 480px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.22);
+      }
+      .connection {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border: 1px solid #d6e5f1;
+        background: #f4f9fd;
+        border-radius: 999px;
+        padding: 5px 10px;
+        color: #40536a;
+        font-size: 0.74rem;
+        white-space: nowrap;
+      }
+      .connection::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #f5c46b;
+        box-shadow: 0 0 0 3px rgba(245, 196, 107, 0.13);
+      }
+      .connection.online::before {
+        background: #58d49b;
+        box-shadow: 0 0 0 3px rgba(88, 212, 155, 0.15);
+      }
+      .connection.offline::before {
+        background: #ff8a80;
+        box-shadow: 0 0 0 3px rgba(255, 138, 128, 0.15);
+      }
+      @media (max-width: 700px) {
+        header {
+          gap: 10px;
+          padding: 12px 16px;
+        }
+        .logo {
+          width: 100%;
+        }
+        nav {
+          order: 2;
+        }
+        .who {
+          margin-left: auto;
+        }
+        main {
+          padding: 30px 16px 54px;
+        }
+        .panel {
+          padding: 20px;
+        }
+        .card {
+          padding: 17px;
+        }
+      }
+      @media (max-width: 430px) {
+        nav button,
+        .ghost {
+          padding: 7px 9px;
+          font-size: 0.78rem;
+        }
+        .connection {
+          order: 3;
+        }
+        .who {
+          font-size: 0.78rem;
+        }
+        .tools select {
+          flex: 1 1 130px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">Smart Campus<small>Complaint Management</small></div>
+      <nav aria-label="Portal">
+        <button id="navS">Student portal</button
+        ><button id="navA">Admin dashboard</button>
+      </nav>
+      <span class="connection" id="connection" role="status" aria-live="polite">Checking connection</span>
+      <span class="who" id="who"></span
+      ><button class="ghost" id="out" hidden>Log out</button>
+    </header>
+    <main id="app"></main>
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      (function () {
+        var CATS = [
+          "Hostel",
+          "Classroom",
+          "Library",
+          "Canteen",
+          "Transport",
+          "Wi-Fi & IT",
+          "Sanitation",
+          "Electricity",
+          "Other",
+        ];
+        var STAT = ["Pending", "In Progress", "Completed"];
+        var TK = "campus_token",
+          token = "";
+        try {
+          token = localStorage.getItem(TK) || "";
+        } catch (e) {}
+        var st = {
+          role: "student",
+          user: null,
+          tab: "submit",
+          authMode: "login",
+          list: [],
+          q: "",
+          fs: "All",
+          fc: "All",
+          mineQ: "",
+          mineStatus: "All",
+        };
+        var $ = function (s) {
+          return document.querySelector(s);
+        };
+        function esc(s) {
+          return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+            return {
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            }[c];
+          });
+        }
+        function fmt(t) {
+          return new Date(t).toLocaleDateString(undefined, {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          });
+        }
+        function cls(s) {
+          return s.replace(" ", "");
+        }
+        function toast(m) {
+          var t = $("#toast");
+          t.textContent = m;
+          t.classList.add("show");
+          clearTimeout(toast.h);
+          toast.h = setTimeout(function () {
+            t.classList.remove("show");
+          }, 2400);
+        }
+        function opts(arr, sel, all) {
+          return (
+            (all ? "<option>" + all + "</option>" : "") +
+            arr
+              .map(function (x) {
+                return (
+                  "<option" +
+                  (x === sel ? " selected" : "") +
+                  ">" +
+                  esc(x) +
+                  "</option>"
+                );
+              })
+              .join("")
+          );
+        }
+        function setToken(t) {
+          token = t || "";
+          try {
+            t ? localStorage.setItem(TK, t) : localStorage.removeItem(TK);
+          } catch (e) {}
+        }
+
+        function checkServer() {
+          var status = $("#connection");
+          api("/api/health")
+            .then(function (d) {
+              status.textContent =
+                d.database === "connected" ? "Server connected" : "Database unavailable";
+              status.className =
+                "connection " + (d.database === "connected" ? "online" : "offline");
+            })
+            .catch(function () {
+              status.textContent = "Server unavailable";
+              status.className = "connection offline";
+            });
+        }
+
+        function api(url, opt) {
+          opt = opt || {};
+          var h = { "Content-Type": "application/json" };
+          if (token) h.Authorization = "Bearer " + token;
+          return fetch(url, {
+            method: opt.method || "GET",
+            headers: h,
+            body: opt.body ? JSON.stringify(opt.body) : undefined,
+          }).then(
+            function (r) {
+              return r
+                .json()
+                .catch(function () {
+                  return {};
+                })
+                .then(function (d) {
+                  if (!r.ok) {
+                    if (
+                      r.status === 401 &&
+                      token &&
+                      url.indexOf("/auth/login") < 0
+                    ) {
+                      logout(true);
+                    }
+                    throw new Error(
+                      d.error || "Something went wrong. Please try again.",
+                    );
+                  }
+                  return d;
+                });
+            },
+            function () {
+              throw new Error(
+                "Cannot reach the server. Check that it is running.",
+              );
+            },
+          );
+        }
+        function logout(expired) {
+          setToken("");
+          st.user = null;
+          st.list = [];
+          render();
+          if (expired === true) toast("Session expired. Please log in again.");
+        }
+
+        function badge(s) {
+          return '<span class="badge b-' + cls(s) + '">' + s + "</span>";
+        }
+        function steps(s) {
+          var i = STAT.indexOf(s);
+          return (
+            '<div class="steps" aria-label="Progress">' +
+            ["Submitted", "In progress", "Completed"]
+              .map(function (l, k) {
+                return (
+                  '<div class="step' +
+                  (k <= i ? " on" : "") +
+                  '">' +
+                  l +
+                  "</div>"
+                );
+              })
+              .join("") +
+            "</div>"
+          );
+        }
+        function card(c, admin) {
+          var h =
+            '<article class="card s-' +
+            cls(c.status) +
+            '"><div class="top"><div><h3>' +
+            esc(c.title) +
+            '</h3><div class="meta">' +
+            esc(c.ticketId) +
+            " &middot; " +
+            esc(c.category) +
+            " &middot; " +
+            esc(c.location) +
+            " &middot; " +
+            fmt(c.createdAt) +
+            (admin
+              ? " &middot; " + esc(c.studentName) + " (" + esc(c.roll) + ")"
+              : "") +
+            "</div></div><div>" +
+            badge(c.status) +
+            '<span class="pri">' +
+            esc(c.priority) +
+            ' priority</span></div></div><p class="desc">' +
+            esc(c.description) +
+            "</p>";
+          if (!admin) h += steps(c.status);
+          if (c.adminNote)
+            h +=
+              '<div class="reply"><b>Admin update:</b> ' +
+              esc(c.adminNote) +
+              ' <span class="meta">(' +
+              fmt(c.updatedAt) +
+              ")</span></div>";
+          if (!admin && c.status === "Completed" && c.resolvedAt)
+            h +=
+              '<div class="meta">Resolved on ' + fmt(c.resolvedAt) + "</div>";
+          if (admin) {
+            h +=
+              '<div class="actions"><input aria-label="Note to student" maxlength="500" placeholder="Add a note for the student" value="' +
+              esc(c.adminNote) +
+              '" id="n-' +
+              c._id +
+              '">';
+            if (c.status === "Pending")
+              h +=
+                '<button class="btn sm sec" data-act="prog" data-id="' +
+                c._id +
+                '">Start work</button>';
+            if (c.status !== "Completed")
+              h +=
+                '<button class="btn sm" data-act="done" data-id="' +
+                c._id +
+                '">Mark as completed</button>';
+            else
+              h +=
+                '<button class="btn sm sec" data-act="reopen" data-id="' +
+                c._id +
+                '">Reopen</button>';
+            h +=
+              '<button class="btn sm sec" data-act="note" data-id="' +
+              c._id +
+              '">Save note</button><button class="btn sm danger" data-act="del" data-id="' +
+              c._id +
+              '">Delete</button></div>';
+          }
+          return h + "</article>";
+        }
+
+        function render() {
+          $("#navS").setAttribute("aria-pressed", st.role === "student");
+          $("#navA").setAttribute("aria-pressed", st.role === "admin");
+          var ok = st.user && st.user.role === st.role;
+          $("#out").hidden = !st.user;
+          $("#who").textContent = st.user
+            ? st.user.role === "admin"
+              ? "Administrator"
+              : st.user.name + " · " + st.user.loginId
+            : "";
+          var app = $("#app");
+          if (!ok) {
+            app.innerHTML = st.role === "student" ? studentAuth() : adminAuth();
+            return;
+          }
+          if (st.role === "student") {
+            app.innerHTML = studentView();
+            loadMine();
+          } else {
+            app.innerHTML = adminShell();
+            loadAdmin();
+          }
+        }
+        function studentAuth() {
+          var reg = st.authMode === "register";
+          return (
+            '<div class="panel login"><h1>Student portal</h1><p class="lead">' +
+            (reg
+              ? "Create an account to report problems and follow their progress."
+              : "Log in to report a problem or check on one you already raised.") +
+            '</p><div class="tabs"><button data-mode="login" aria-pressed="' +
+            !reg +
+            '">Log in</button><button data-mode="register" aria-pressed="' +
+            reg +
+            '">Create account</button></div><form id="sf">' +
+            (reg
+              ? '<div class="field"><label for="nm">Full name</label><input id="nm" autocomplete="name" required maxlength="60"></div>'
+              : "") +
+            '<div class="field"><label for="rl">Roll number</label><input id="rl" required placeholder="e.g. 21CS042" autocomplete="username"></div><div class="field"><label for="pw">Password</label><input id="pw" type="password" required minlength="6" autocomplete="' +
+            (reg ? "new-password" : "current-password") +
+            '"></div><button class="btn" type="submit">' +
+            (reg ? "Create account" : "Log in") +
+            '</button><p class="err" id="ae" role="alert"></p></form></div>'
+          );
+        }
+        function adminAuth() {
+          return '<div class="panel login"><h1>Admin dashboard</h1><p class="lead">Sign in to review and resolve campus complaints.</p><form id="af"><div class="field"><label for="au">Username</label><input id="au" required autocomplete="username"></div><div class="field"><label for="pw">Password</label><input id="pw" type="password" required autocomplete="current-password"></div><button class="btn" type="submit">Sign in</button><p class="err" id="ae" role="alert"></p></form></div>';
+        }
+
+        function studentView() {
+          var h =
+            "<h1>Hello, " +
+            esc(st.user.name.split(" ")[0]) +
+            '</h1><p class="lead">Report an issue, then follow it here until it is resolved.</p><div class="tabs"><button data-tab="submit" aria-pressed="' +
+            (st.tab === "submit") +
+            '">New complaint</button><button data-tab="mine" aria-pressed="' +
+            (st.tab === "mine") +
+            '">My complaints</button></div>';
+          if (st.tab === "submit")
+            h +=
+              '<form class="panel" id="cf"><h2>Describe the problem</h2><div class="field"><label for="t">Short title</label><input id="t" required maxlength="80" placeholder="e.g. Fan not working in Room 12"></div><div class="grid2"><div class="field"><label for="c">Category</label><select id="c">' +
+              opts(CATS) +
+              '</select></div><div class="field"><label for="p">How urgent is it?</label><select id="p">' +
+              opts(["Low", "Medium", "High"], "Medium") +
+              '</select></div></div><div class="field"><label for="l">Location</label><input id="l" required maxlength="120" placeholder="Building, floor or room"></div><div class="field"><label for="d">Details</label><textarea id="d" required maxlength="1500" placeholder="What happened, since when, and who is affected?"></textarea></div><button class="btn" type="submit">Submit complaint</button><p class="err" id="ce" role="alert"></p></form>';
+          else
+            h +=
+              '<div class="tools"><input id="mineQ" type="search" aria-label="Search my complaints" placeholder="Search title, ticket, location or category" value="' +
+              esc(st.mineQ) +
+              '"><select id="mineStatus" aria-label="Filter by status">' +
+              opts(STAT, st.mineStatus, "All statuses") +
+              '</select></div><div id="list"><div class="empty">Loading your complaints…</div></div>';
+          return h;
+        }
+        function renderMineList() {
+          var el = $("#list");
+          if (!el) return;
+          var q = st.mineQ.trim().toLowerCase();
+          var complaints = st.list.filter(function (c) {
+            var matchesText =
+              !q ||
+              [c.title, c.ticketId, c.location, c.category]
+                .join(" ")
+                .toLowerCase()
+                .indexOf(q) >= 0;
+            return (
+              matchesText &&
+              (st.mineStatus === "All" || c.status === st.mineStatus)
+            );
+          });
+          var open = st.list.filter(function (c) {
+            return c.status !== "Completed";
+          }).length;
+          el.innerHTML = st.list.length
+            ? '<p class="hint" style="margin:0 0 12px">' +
+              open +
+              " of " +
+              st.list.length +
+              " still being handled. This page refreshes automatically.</p>" +
+              (complaints.length
+                ? complaints
+                    .map(function (c) {
+                      return card(c, false);
+                    })
+                    .join("")
+                : '<div class="empty">No complaints match your search or status filter.</div>')
+            : '<div class="empty">You have not submitted any complaints yet.<br><br><button class="btn" data-tab="submit">Submit your first complaint</button></div>';
+        }
+        function loadMine() {
+          if (st.tab !== "mine") return;
+          api("/api/complaints/mine")
+            .then(function (d) {
+              if (!$("#list") || st.tab !== "mine") return;
+              st.list = d.complaints;
+              renderMineList();
+            })
+            .catch(function (e) {
+              var el = $("#list");
+              if (el)
+                el.innerHTML =
+                  '<div class="empty">' + esc(e.message) + "</div>";
+            });
+        }
+        function adminShell() {
+          return (
+            '<h1>Complaint dashboard</h1><p class="lead">Open complaints are listed first. Mark a complaint as completed once it is fixed; the student sees the change right away.</p><div class="stats" id="stats"></div><div class="tools"><input id="q" type="search" aria-label="Search" placeholder="Search by title, student, roll no. or ID" value="' +
+            esc(st.q) +
+            '"><select id="fs" aria-label="Status">' +
+            opts(STAT, st.fs, "All") +
+            '</select><select id="fc" aria-label="Category">' +
+            opts(CATS, st.fc, "All") +
+            '</select></div><div id="list"><div class="empty">Loading complaints…</div></div>'
+          );
+        }
+        function loadAdmin() {
+          var qs =
+            "?q=" +
+            encodeURIComponent(st.q) +
+            (st.fs !== "All" ? "&status=" + encodeURIComponent(st.fs) : "") +
+            (st.fc !== "All" ? "&category=" + encodeURIComponent(st.fc) : "");
+          Promise.all([
+            api("/api/complaints/stats"),
+            api("/api/complaints" + qs),
+          ])
+            .then(function (r) {
+              var s = r[0].stats,
+                el = $("#list");
+              if (!el || !$("#stats")) return;
+              $("#stats").innerHTML = [
+                ["Total", s.total],
+                ["Pending", s.Pending],
+                ["In progress", s["In Progress"]],
+                ["Completed", s.Completed],
+              ]
+                .map(function (x) {
+                  return (
+                    '<div class="stat"><b>' +
+                    x[1] +
+                    "</b><span>" +
+                    x[0] +
+                    "</span></div>"
+                  );
+                })
+                .join("");
+              el.innerHTML = r[1].complaints.length
+                ? r[1].complaints
+                    .map(function (c) {
+                      return card(c, true);
+                    })
+                    .join("")
+                : '<div class="empty">No complaints match these filters.</div>';
+            })
+            .catch(function (e) {
+              var el = $("#list");
+              if (el)
+                el.innerHTML =
+                  '<div class="empty">' + esc(e.message) + "</div>";
+            });
+        }
+
+        function busy(form, on) {
+          var b = form.querySelector("button[type=submit]");
+          if (b) b.disabled = on;
+        }
+        function authDone(d) {
+          setToken(d.token);
+          st.user = d.user;
+          st.role = d.user.role;
+          st.tab = "submit";
+          render();
+        }
+        document.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var f = e.target,
+            id = f.id,
+            err = function (m) {
+              var x = $("#ae") || $("#ce");
+              if (x) x.textContent = m;
+            };
+          if (id === "sf") {
+            busy(f, true);
+            var reg = st.authMode === "register";
+            api(reg ? "/api/auth/register" : "/api/auth/login", {
+              method: "POST",
+              body: reg
+                ? {
+                    name: $("#nm").value,
+                    roll: $("#rl").value,
+                    password: $("#pw").value,
+                  }
+                : { loginId: $("#rl").value, password: $("#pw").value },
+            })
+              .then(function (d) {
+                if (d.user.role !== "student") {
+                  setToken("");
+                  throw new Error(
+                    "This is an admin account. Use the Admin dashboard.",
+                  );
+                }
+                authDone(d);
+              })
+              .catch(function (x) {
+                err(x.message);
+                busy(f, false);
+              });
+          }
+          if (id === "af") {
+            busy(f, true);
+            api("/api/auth/login", {
+              method: "POST",
+              body: { loginId: $("#au").value, password: $("#pw").value },
+            })
+              .then(function (d) {
+                if (d.user.role !== "admin") {
+                  setToken("");
+                  throw new Error(
+                    "This is a student account. Use the Student portal.",
+                  );
+                }
+                authDone(d);
+              })
+              .catch(function (x) {
+                err(x.message);
+                busy(f, false);
+              });
+          }
+          if (id === "cf") {
+            busy(f, true);
+            api("/api/complaints", {
+              method: "POST",
+              body: {
+                title: $("#t").value,
+                category: $("#c").value,
+                priority: $("#p").value,
+                location: $("#l").value,
+                description: $("#d").value,
+              },
+            })
+              .then(function () {
+                st.tab = "mine";
+                render();
+                toast("Complaint submitted");
+              })
+              .catch(function (x) {
+                err(x.message);
+                busy(f, false);
+              });
+          }
+        });
+        document.addEventListener("click", function (e) {
+          var b = e.target.closest("button");
+          if (!b) return;
+          if (b.id === "navS") {
+            st.role = "student";
+            render();
+          }
+          if (b.id === "navA") {
+            st.role = "admin";
+            render();
+          }
+          if (b.id === "out") logout();
+          if (b.dataset.mode) {
+            st.authMode = b.dataset.mode;
+            render();
+          }
+          if (b.dataset.tab) {
+            st.tab = b.dataset.tab;
+            render();
+          }
+          var a = b.dataset.act;
+          if (!a) return;
+          var id = b.dataset.id,
+            ni = $("#n-" + id),
+            note = ni ? ni.value : "";
+          if (a === "del") {
+            if (!confirm("Delete this complaint? This cannot be undone."))
+              return;
+            api("/api/complaints/" + id, { method: "DELETE" })
+              .then(function () {
+                loadAdmin();
+                toast("Complaint deleted");
+              })
+              .catch(function (x) {
+                toast(x.message);
+              });
+            return;
+          }
+          var body = { note: note };
+          if (a === "prog" || a === "reopen") body.status = "In Progress";
+          if (a === "done") body.status = "Completed";
+          api("/api/complaints/" + id, { method: "PATCH", body: body })
+            .then(function () {
+              loadAdmin();
+              toast(
+                a === "done"
+                  ? "Marked as completed"
+                  : a === "note"
+                    ? "Note saved"
+                    : "Status updated",
+              );
+            })
+            .catch(function (x) {
+              toast(x.message);
+            });
+        });
+        var qt;
+        document.addEventListener("input", function (e) {
+          if (e.target.id === "mineQ") {
+            st.mineQ = e.target.value;
+            renderMineList();
+          }
+          if (e.target.id === "q") {
+            st.q = e.target.value;
+            clearTimeout(qt);
+            qt = setTimeout(loadAdmin, 300);
+          }
+        });
+        document.addEventListener("change", function (e) {
+          if (e.target.id === "mineStatus") {
+            st.mineStatus = e.target.value === "All statuses" ? "All" : e.target.value;
+            renderMineList();
+          }
+          if (e.target.id === "fs") {
+            st.fs = e.target.value;
+            loadAdmin();
+          }
+          if (e.target.id === "fc") {
+            st.fc = e.target.value;
+            loadAdmin();
+          }
+        });
+        setInterval(function () {
+          if (document.hidden || !st.user || st.user.role !== st.role) return;
+          if (st.role === "student") loadMine();
+          else if (
+            !document.activeElement ||
+            document.activeElement.tagName !== "INPUT"
+          )
+            loadAdmin();
+        }, 20000);
+        checkServer();
+        setInterval(checkServer, 30000);
+
+        if (token) {
+          api("/api/auth/me")
+            .then(function (d) {
+              st.user = d.user;
+              st.role = d.user.role;
+              render();
+            })
+            .catch(function () {
+              setToken("");
+              render();
+            });
+        } else render();
+      })();
+    </script>
+  </body>
+</html>
