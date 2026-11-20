@@ -1,0 +1,13 @@
+Smart Campus Complaint Management
+
+Smart Campus Complaint Management is a web application for reporting and managing campus issues. Students can create accounts, submit complaints, and track their status. Administrators can review complaints, search and filter the list, update statuses, add notes, and remove complaints.
+
+The application has a plain HTML, CSS, and JavaScript frontend served by an Express.js backend. The frontend communicates with the backend through JSON-based HTTP API endpoints. The backend handles authentication with JSON Web Tokens, applies student and administrator access rules, and uses Mongoose to store users and complaints in MongoDB.
+
+Main technologies:
+- Node.js and Express.js
+- MongoDB and Mongoose
+- HTML, CSS, and JavaScript
+- JSON Web Tokens (JWT) for authentication
+
+To run the application, configure the environment settings, start MongoDB, and run `npm start`. By default, the application is available at http://localhost:3000.
